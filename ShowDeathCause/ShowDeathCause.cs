@@ -1,6 +1,9 @@
 ﻿using BepInEx;
 using R2API.Utils;
 using RoR2;
+using System.Collections.Generic;
+using Zio;
+using Zio.FileSystems;
 
 namespace ShowDeathCause
 {
@@ -11,8 +14,10 @@ namespace ShowDeathCause
     {
         // These strings are added to avoid trying to access a GameObject that doesn't exist
         private DamageReport _damageReport;
-        private string _friendlyAttacker;
-        private string _attacker;
+        private string _finalAttacker;
+        private string _damageTaken;
+
+        public static FileSystem FileSystem { get; private set; }
 
         public void Awake()
         {
@@ -28,27 +33,31 @@ namespace ShowDeathCause
                 _damageReport = damageReport;
 
                 string token;
+                _damageTaken = $"{damageReport.damageInfo.damage:F2}";
                 if (damageReport.isFallDamage)
                 {
                     // Fall damage is fatal when HP <=1 or when Artifact of Frailty is active
-                    token = $"<color=#00FF80>{networkUser.userName}</color> died to fall damage.";
+                    token = "SDC_PLAYER_DEATH_FALLDAMAGE";
                 }
                 else if (damageReport.isFriendlyFire)
                 {
                     // Friendly fire is possible through the Artifact of Chaos or other mods
                     // Compatibility with other mods is untested, but shouldn't break
-                    _friendlyAttacker = damageReport.attackerMaster.playerCharacterMasterController.networkUser
+                    _finalAttacker = damageReport.attackerMaster.playerCharacterMasterController.networkUser
                         .userName;
-                    token = damageReport.damageInfo.crit ? $"<color=#FF0000>CRITICAL HIT!</color> <color=#00FF80>{networkUser.userName}</color> killed by <color=#FF8000>{_friendlyAttacker}</color> ({damageReport.damageInfo.damage:F2} damage taken)." : $"<color=#00FF80>{networkUser.userName}</color> killed by <color=#FF8000>{_friendlyAttacker}</color> ({damageReport.damageInfo.damage:F2} damage taken).";
+                    token = damageReport.damageInfo.crit ? $"SDC_PLAYER_DEATH_FRIENDLY_CRIT" : $"SDC_PLAYER_DEATH_FRIENDLY";
                 }
                 else
                 {
                     // Standard code path, GetBestBodyName replaces the need for a check against damageReport.attackerBody
-                    _attacker = Util.GetBestBodyName(damageReport.attackerBody.gameObject);
-                    token = $"<color=#00FF80>{networkUser.userName}</color> killed by <color=#FF8000>{_attacker}</color> ({damageReport.damageInfo.damage:F2} damage taken).";
+                    _finalAttacker = Util.GetBestBodyName(damageReport.attackerBody.gameObject);
+                    token = "SDC_PLAYER_DEATH";
                 }
-                
-                Chat.SendBroadcastChat(new Chat.SimpleChatMessage {baseToken = token});
+
+                Chat.SendBroadcastChat(new Chat.SimpleChatMessage {
+                    baseToken = token,
+                    paramTokens = new string[] { networkUser.userName, _finalAttacker, _damageTaken }
+                });
             };
 
             // This upgrades the game end panel to show damage numbers and be more concise
@@ -60,19 +69,36 @@ namespace ShowDeathCause
                 if (_damageReport == null) return;
 
                 // Override the string for killerBodyLabel ("Killed By: <killer>" on the end game panel)
+                string token;
                 if (_damageReport.isFallDamage)
                 {
-                    self.killerBodyLabel.text = "<color=#FFFFFF>Killed By:</color> <color=#964B00>Fall Damage</color>";
+                    token = "FALLDAMAGE_PREFIX_DEATH";
                 }
                 else if (_damageReport.isFriendlyFire)
                 {
-                    self.killerBodyLabel.text = $"<color=#FFFFFF>Killed By:</color> <color=#FFFF80>{_friendlyAttacker}</color> <color=#FFFFFF>({_damageReport.damageInfo.damage:F2} damage)</color>";
+                    token = $"GENERIC_PREFIX_DEATH";
                 }
                 else
                 {
-                    self.killerBodyLabel.text = $"<color=#FFFFFF>Killed By:</color> <color=#FFFF80>{_attacker}</color> <color=#FFFFFF>({_damageReport.damageInfo.damage:F2} damage)</color>";
+                    token = $"GENERIC_PREFIX_DEATH";
                 }
+                self.killerBodyLabel.text = Language.GetStringFormatted(token, new object[] { _finalAttacker, _damageTaken });
             };
+
+            // This sets up the language
+            #region Language
+            PhysicalFileSystem physicalFileSystem = new PhysicalFileSystem();
+            var assemblyDir = System.IO.Path.GetDirectoryName(Info.Location);
+            FileSystem = new SubFileSystem(physicalFileSystem, physicalFileSystem.ConvertPathFromInternal(assemblyDir), true);
+
+            if (FileSystem.DirectoryExists("/Language/"))
+            {
+                Language.collectLanguageRootFolders += delegate (List<DirectoryEntry> list)
+                {
+                    list.Add(FileSystem.GetDirectoryEntry("/Language/"));
+                };
+            }
+            #endregion
         }
     }
 }
