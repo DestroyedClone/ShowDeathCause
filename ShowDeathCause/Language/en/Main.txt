@@ -1,0 +1,7 @@
+﻿{
+	"strings":
+	{
+		"FALLDAMAGE_PREFIX_DEATH" : "<color=#FFFFFF>Killed By:</color> <color=#964B00>Fall Damage</color>",
+		"GENERIC_PREFIX_DEATH" : "<color=#FFFFFF>Killed By:</color> <color=#FFFF80>{0}</color> <color=#FFFFFF>({1} damage)</color>",
+	}
+}
