@@ -1,4 +1,5 @@
 ﻿using BepInEx;
+using UnityEngine;
 using RoR2;
 using System.Collections.Generic;
 
@@ -138,9 +139,9 @@ namespace ShowDeathCause
 
             if (FileSystem.DirectoryExists("/Language/"))
             {
-                Language.collectLanguageRootFolders += delegate (List<string> list)
+                Language.collectLanguageRootFolders += (list)
                 {
-                    list.Add(System.IO.Path.Combine(assemblyDir, "Language"));
+                    list.Add(FileSystem.ConvertPathToInternal("/Language/"));
                 };
             }*/
 

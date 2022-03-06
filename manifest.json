@@ -4,7 +4,7 @@
     "website_url": "https://github.com/NotTsunami/ShowDeathCause",
     "description": "Tells how your and your friends miserable lives ended.",
     "dependencies": [
-        "tristanmcpherson-R2API-3.0.52",
-        "bbepis-BepInExPack-5.4.9"
+        "bbepis-BepInExPack-5.4.9",
+        "RiskofThunder-HookGenPatcher-1.2.3"
     ]
 }
