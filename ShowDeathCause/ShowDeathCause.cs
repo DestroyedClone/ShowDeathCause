@@ -26,6 +26,10 @@ namespace ShowDeathCause
                 return damageReport.attackerMaster.playerCharacterMasterController ? damageReport.attackerMaster.playerCharacterMasterController.networkUser
                             .userName : Util.GetBestBodyName(damageReport.attackerBody.gameObject);
             }
+            else if (damageReport.attacker) //for overrides like Suicide() of type VoidDeath
+            {
+                return Util.GetBestBodyName(damageReport.attacker);
+            }
             else return "???";
         }
 
@@ -41,10 +45,10 @@ namespace ShowDeathCause
                 if (!networkUser) return;
 
                 _damageReport = damageReport;
+                _finalAttacker = GetAttackerName(damageReport);
 
                 string token;
                 _damageTaken = $"{damageReport.damageInfo.damage:F2}";
-                _finalAttacker = GetAttackerName(damageReport);
                 if (damageReport.isFallDamage)
                 {
                     // Fall damage is fatal when HP <=1 or when Artifact of Frailty is active
@@ -130,7 +134,8 @@ namespace ShowDeathCause
                 List<KeyValuePair<string, string>> list = new List<KeyValuePair<string, string>>()
                 {
                     new KeyValuePair<string, string>("SDC_KILLER_FALLDAMAGE", "<color=#964B00>Fall Damage</color>"),
-                    
+                    new KeyValuePair<string, string>("SDC_KILLER_VOID", "<color=#964B00>Suffocation</color>"),
+
                     new KeyValuePair<string, string>("SDC_GENERIC_PREFIX_DEATH", "<color=#FFFFFF>Killed By:</color> <color=#FFFF80>{0}</color> <color=#FFFFFF>({1} damage)</color>"),
                     new KeyValuePair<string, string>("SDC_GENERIC_PREFIX_DEATH_FRIENDLY", "<color=#FFFFFF>Killed By:</color> <color=#FFFF80>{0}</color> <color=#FFFFFF>({1} damage) <color=#32a852>(FF)</color></color>"),
                     new KeyValuePair<string, string>("SDC_GENERIC_PREFIX_DEATH_VOID", "<color=#FFFFFF>Killed By:</color> <color=#FFFF80>{0}</color> <color=#FFFFFF>({1} damage) <color=#621e7d>(Void)</color></color>"),
