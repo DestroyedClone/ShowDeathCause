@@ -18,6 +18,13 @@ namespace ShowDeathCause
 
         //public static FileSystem FileSystem { get; private set; }
 
+        public string GetAttackerName(DamageReport damageReport)
+        {
+            // Standard code path, GetBestBodyName replaces the need for a check against damageReport.attackerBody
+            return damageReport.attackerMaster.playerCharacterMasterController ? damageReport.attackerMaster.playerCharacterMasterController.networkUser
+                        .userName : Util.GetBestBodyName(damageReport.attackerBody.gameObject);
+        }
+
         public void Awake()
         {
             // This function handles printing the death message in chat
@@ -33,6 +40,7 @@ namespace ShowDeathCause
 
                 string token;
                 _damageTaken = $"{damageReport.damageInfo.damage:F2}";
+                _finalAttacker = GetAttackerName(damageReport);
                 if (damageReport.isFallDamage)
                 {
                     // Fall damage is fatal when HP <=1 or when Artifact of Frailty is active
@@ -42,8 +50,6 @@ namespace ShowDeathCause
                 {
                     // Friendly fire is possible through the Artifact of Chaos or other mods
                     // Compatibility with other mods is untested, but shouldn't break
-                    _finalAttacker = damageReport.attackerMaster.playerCharacterMasterController.networkUser
-                        .userName;
                     token = damageReport.damageInfo.crit ? $"SDC_PLAYER_DEATH_FRIENDLY_CRIT" : $"SDC_PLAYER_DEATH_FRIENDLY";
                 }
                 else if ((damageReport.damageInfo.damageType & DamageType.VoidDeath) != DamageType.Generic)
@@ -52,8 +58,6 @@ namespace ShowDeathCause
                 }
                 else
                 {
-                    // Standard code path, GetBestBodyName replaces the need for a check against damageReport.attackerBody
-                    _finalAttacker = Util.GetBestBodyName(damageReport.attackerBody.gameObject);
                     token = damageReport.damageInfo.crit ? $"SDC_PLAYER_DEATH_CRIT" : $"SDC_PLAYER_DEATH";
                 }
 
