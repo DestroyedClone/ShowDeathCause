@@ -132,12 +132,10 @@ namespace ShowDeathCause
                     new KeyValuePair<string, string>("SDC_KILLER_FALLDAMAGE", "<color=#964B00>Fall Damage</color>"),
                     
                     new KeyValuePair<string, string>("SDC_GENERIC_PREFIX_DEATH", "<color=#FFFFFF>Killed By:</color> <color=#FFFF80>{0}</color> <color=#FFFFFF>({1} damage)</color>"),
-                    new KeyValuePair<string, string>("SDC_GENERIC_PREFIX_DEATH_FRIENDLY", "<color=#FFFFFF>Killed By:</color> <color=#FFFF80>{0}</color> <color=#FFFFFF>({1} damage)</color>" +
-                    "\n<color=#32a852>(Friendly Fire)</color>"),
-                    new KeyValuePair<string, string>("SDC_GENERIC_PREFIX_DEATH_VOID", "<color=#FFFFFF>Killed By:</color> <color=#FFFF80>{0}</color> <color=#FFFFFF>({1} damage)</color>" +
-                    "\n<color=#621e7d>(Void Death)</color>"),
+                    new KeyValuePair<string, string>("SDC_GENERIC_PREFIX_DEATH_FRIENDLY", "<color=#FFFFFF>Killed By:</color> <color=#FFFF80>{0}</color> <color=#FFFFFF>({1} damage) <color=#32a852>(FF)</color></color>"),
+                    new KeyValuePair<string, string>("SDC_GENERIC_PREFIX_DEATH_VOID", "<color=#FFFFFF>Killed By:</color> <color=#FFFF80>{0}</color> <color=#FFFFFF>({1} damage) <color=#621e7d>(Void)</color></color>"),
 
-                    new KeyValuePair<string, string>("SDC_PLAYER_DEATH_FALLDAMAGE", "<color=#00FF80>{0}</color> died to fall damage ({2} damage taken)."),
+                    new KeyValuePair<string, string>("SDC_PLAYER_DEATH_FALLDAMAGE", "<color=#00FF80>{0}</color> died to <color=#964B00>fall damage</color> ({2} damage taken)."),
                     new KeyValuePair<string, string>("SDC_PLAYER_DEATH_FRIENDLY", "<color=#32a852>FRIENDLY FIRE!</color> <color=#00FF80>{0}</color> killed by <color=#FF8000>{1}</color> ({2} damage taken)."),
                     new KeyValuePair<string, string>("SDC_PLAYER_DEATH_FRIENDLY_CRIT", "<color=#32a852>FRIENDLY FIRE!</color> <color=#FF0000>CRITICAL HIT!</color> <color=#00FF80>{0}</color> killed by <color=#FF8000>{1}</color> ({2} damage taken)."),
                     new KeyValuePair<string, string>("SDC_PLAYER_DEATH", "<color=#00FF80>{0}</color> killed by <color=#FF8000>{1}</color> ({2} damage taken)."),
