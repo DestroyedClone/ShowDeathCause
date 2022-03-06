@@ -1,6 +1,7 @@
 ﻿using BepInEx;
 using RoR2;
 using System.Collections.Generic;
+
 //using Zio.FileSystems;
 
 namespace ShowDeathCause
@@ -144,8 +145,8 @@ namespace ShowDeathCause
             }*/
 
             Language.onCurrentLanguageChanged += Language_onCurrentLanguageChanged;
-            #endregion Language
 
+            #endregion Language
         }
 
         private void Language_onCurrentLanguageChanged()
