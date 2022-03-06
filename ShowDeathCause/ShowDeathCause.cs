@@ -1,22 +1,22 @@
 ﻿using BepInEx;
 using RoR2;
 using System.Collections.Generic;
-using Zio;
-using Zio.FileSystems;
+//using Zio.FileSystems;
 
 namespace ShowDeathCause
 {
-    [NetworkCompatibility(CompatibilityLevel.NoNeedForSync, VersionStrictness.DifferentModVersionsAreOk)]
-    [BepInDependency("com.bepis.r2api")]
+    //[NetworkCompatibility(CompatibilityLevel.NoNeedForSync, VersionStrictness.DifferentModVersionsAreOk)]
+    //[BepInDependency("com.bepis.r2api")]
     [BepInPlugin("dev.tsunami.ShowDeathCause", "ShowDeathCause", "2.0.2")]
     public class ShowDeathCause : BaseUnityPlugin
     {
         // These strings are added to avoid trying to access a GameObject that doesn't exist
         private DamageReport _damageReport;
+
         private string _finalAttacker;
         private string _damageTaken;
 
-        public static FileSystem FileSystem { get; private set; }
+        //public static FileSystem FileSystem { get; private set; }
 
         public void Awake()
         {
@@ -53,7 +53,8 @@ namespace ShowDeathCause
                     token = "SDC_PLAYER_DEATH";
                 }
 
-                Chat.SendBroadcastChat(new Chat.SimpleChatMessage {
+                Chat.SendBroadcastChat(new Chat.SimpleChatMessage
+                {
                     baseToken = token,
                     paramTokens = new string[] { networkUser.userName, _finalAttacker, _damageTaken }
                 });
@@ -85,19 +86,42 @@ namespace ShowDeathCause
             };
 
             // This sets up the language
+
             #region Language
-            PhysicalFileSystem physicalFileSystem = new PhysicalFileSystem();
+
+            /*PhysicalFileSystem physicalFileSystem = new PhysicalFileSystem();
             var assemblyDir = System.IO.Path.GetDirectoryName(Info.Location);
             FileSystem = new SubFileSystem(physicalFileSystem, physicalFileSystem.ConvertPathFromInternal(assemblyDir), true);
 
             if (FileSystem.DirectoryExists("/Language/"))
             {
-                Language.collectLanguageRootFolders += delegate (List<DirectoryEntry> list)
+                Language.collectLanguageRootFolders += delegate (List<string> list)
                 {
-                    list.Add(FileSystem.GetDirectoryEntry("/Language/"));
+                    list.Add(System.IO.Path.Combine(assemblyDir, "Language"));
                 };
+            }*/
+
+            Language.onCurrentLanguageChanged += Language_onCurrentLanguageChanged;
+            #endregion Language
+
+        }
+
+        private void Language_onCurrentLanguageChanged()
+        {
+            if (Language.GetString("SDC_PLAYER_DEATH_FALLDAMAGE") == "SDC_PLAYER_DEATH_FALLDAMAGE") //this always runs now so it can be removed
+            {
+                List<KeyValuePair<string, string>> list = new List<KeyValuePair<string, string>>()
+            {
+                new KeyValuePair<string, string>("FALLDAMAGE_PREFIX_DEATH", "<color=#FFFFFF>Killed By:</color> <color=#964B00>Fall Damage</color>"),
+                new KeyValuePair<string, string>("GENERIC_PREFIX_DEATH", "<color=#FFFFFF>Killed By:</color> <color=#FFFF80>{0}</color> <color=#FFFFFF>({1} damage)</color>"),
+                new KeyValuePair<string, string>("SDC_PLAYER_DEATH_FALLDAMAGE", "<color=#00FF80>{0}</color> died to fall damage."),
+                new KeyValuePair<string, string>("SDC_PLAYER_DEATH_FRIENDLY_CRIT", "<color=#FF0000>CRITICAL HIT!</color> <color=#00FF80>{0}</color> killed by <color=#FF8000>{1}</color> ({2} damage taken)."),
+                new KeyValuePair<string, string>("SDC_PLAYER_DEATH_FRIENDLY", "<color=#00FF80>{0}</color> killed by <color=#FF8000>{1}</color> ({2} damage taken)."),
+                new KeyValuePair<string, string>("SDC_PLAYER_DEATH", "<color=#00FF80>{0}</color> killed by <color=#FF8000>{1}</color> ({2} damage taken)."),
+            };
+
+                Language.currentLanguage.SetStringsByTokens(list);
             }
-            #endregion
         }
     }
 }
