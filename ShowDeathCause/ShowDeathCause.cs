@@ -46,11 +46,15 @@ namespace ShowDeathCause
                         .userName;
                     token = damageReport.damageInfo.crit ? $"SDC_PLAYER_DEATH_FRIENDLY_CRIT" : $"SDC_PLAYER_DEATH_FRIENDLY";
                 }
+                else if ((damageReport.damageInfo.damageType & DamageType.VoidDeath) != DamageType.Generic)
+                {
+                    token = "SDC_PLAYER_DEATH_VOID";
+                }
                 else
                 {
                     // Standard code path, GetBestBodyName replaces the need for a check against damageReport.attackerBody
                     _finalAttacker = Util.GetBestBodyName(damageReport.attackerBody.gameObject);
-                    token = "SDC_PLAYER_DEATH";
+                    token = damageReport.damageInfo.crit ? $"SDC_PLAYER_DEATH_CRIT" : $"SDC_PLAYER_DEATH";
                 }
 
                 Chat.SendBroadcastChat(new Chat.SimpleChatMessage
@@ -72,19 +76,24 @@ namespace ShowDeathCause
                 string token;
                 if (_damageReport.isFallDamage)
                 {
-                    token = "FALLDAMAGE_PREFIX_DEATH";
+                    token = "SDC_GENERIC_PREFIX_DEATH";
+                    _finalAttacker = Language.GetString("SDC_KILLER_FALLDAMAGE");
+                    self.killerBodyPortraitImage.texture = RoR2Content.Artifacts.weakAssKneesArtifactDef.smallIconSelectedSprite.texture;
                 }
                 else if (_damageReport.isFriendlyFire)
                 {
-                    token = $"GENERIC_PREFIX_DEATH";
+                    token = "SDC_GENERIC_PREFIX_DEATH_FRIENDLY";
+                }
+                else if ((_damageReport.damageInfo.damageType & DamageType.VoidDeath) != DamageType.Generic)
+                {
+                    token = "SDC_GENERIC_PREFIX_DEATH_VOID";
                 }
                 else
                 {
-                    token = $"GENERIC_PREFIX_DEATH";
+                    token = $"SDC_GENERIC_PREFIX_DEATH";
                 }
                 self.killerBodyLabel.text = Language.GetStringFormatted(token, new object[] { _finalAttacker, _damageTaken });
             };
-
             // This sets up the language
 
             #region Language
@@ -111,14 +120,22 @@ namespace ShowDeathCause
             if (Language.GetString("SDC_PLAYER_DEATH_FALLDAMAGE") == "SDC_PLAYER_DEATH_FALLDAMAGE") //this always runs now so it can be removed
             {
                 List<KeyValuePair<string, string>> list = new List<KeyValuePair<string, string>>()
-            {
-                new KeyValuePair<string, string>("FALLDAMAGE_PREFIX_DEATH", "<color=#FFFFFF>Killed By:</color> <color=#964B00>Fall Damage</color>"),
-                new KeyValuePair<string, string>("GENERIC_PREFIX_DEATH", "<color=#FFFFFF>Killed By:</color> <color=#FFFF80>{0}</color> <color=#FFFFFF>({1} damage)</color>"),
-                new KeyValuePair<string, string>("SDC_PLAYER_DEATH_FALLDAMAGE", "<color=#00FF80>{0}</color> died to fall damage."),
-                new KeyValuePair<string, string>("SDC_PLAYER_DEATH_FRIENDLY_CRIT", "<color=#FF0000>CRITICAL HIT!</color> <color=#00FF80>{0}</color> killed by <color=#FF8000>{1}</color> ({2} damage taken)."),
-                new KeyValuePair<string, string>("SDC_PLAYER_DEATH_FRIENDLY", "<color=#00FF80>{0}</color> killed by <color=#FF8000>{1}</color> ({2} damage taken)."),
-                new KeyValuePair<string, string>("SDC_PLAYER_DEATH", "<color=#00FF80>{0}</color> killed by <color=#FF8000>{1}</color> ({2} damage taken)."),
-            };
+                {
+                    new KeyValuePair<string, string>("SDC_KILLER_FALLDAMAGE", "<color=#964B00>Fall Damage</color>"),
+                    
+                    new KeyValuePair<string, string>("SDC_GENERIC_PREFIX_DEATH", "<color=#FFFFFF>Killed By:</color> <color=#FFFF80>{0}</color> <color=#FFFFFF>({1} damage)</color>"),
+                    new KeyValuePair<string, string>("SDC_GENERIC_PREFIX_DEATH_FRIENDLY", "<color=#FFFFFF>Killed By:</color> <color=#FFFF80>{0}</color> <color=#FFFFFF>({1} damage)</color>" +
+                    "\n<color=#32a852>(Friendly Fire)</color>"),
+                    new KeyValuePair<string, string>("SDC_GENERIC_PREFIX_DEATH_VOID", "<color=#FFFFFF>Killed By:</color> <color=#FFFF80>{0}</color> <color=#FFFFFF>({1} damage)</color>" +
+                    "\n<color=#621e7d>(Void Death)</color>"),
+
+                    new KeyValuePair<string, string>("SDC_PLAYER_DEATH_FALLDAMAGE", "<color=#00FF80>{0}</color> died to fall damage ({2} damage taken)."),
+                    new KeyValuePair<string, string>("SDC_PLAYER_DEATH_FRIENDLY", "<color=#32a852>FRIENDLY FIRE!</color> <color=#00FF80>{0}</color> killed by <color=#FF8000>{1}</color> ({2} damage taken)."),
+                    new KeyValuePair<string, string>("SDC_PLAYER_DEATH_FRIENDLY_CRIT", "<color=#32a852>FRIENDLY FIRE!</color> <color=#FF0000>CRITICAL HIT!</color> <color=#00FF80>{0}</color> killed by <color=#FF8000>{1}</color> ({2} damage taken)."),
+                    new KeyValuePair<string, string>("SDC_PLAYER_DEATH", "<color=#00FF80>{0}</color> killed by <color=#FF8000>{1}</color> ({2} damage taken)."),
+                    new KeyValuePair<string, string>("SDC_PLAYER_DEATH_CRIT", "<color=#FF0000>CRITICAL HIT!</color> <color=#00FF80>{0}</color> killed by <color=#FF8000>{1}</color> ({2} damage taken)."),
+                    new KeyValuePair<string, string>("SDC_PLAYER_DEATH_VOID", "<color=#621e7d>JAILED!</color> <color=#00FF80>{0}</color> killed by <color=#FF8000>{1}</color>."),
+                };
 
                 Language.currentLanguage.SetStringsByTokens(list);
             }
