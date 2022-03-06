@@ -155,11 +155,11 @@ namespace ShowDeathCause
                 List<KeyValuePair<string, string>> list = new List<KeyValuePair<string, string>>()
                 {
                     new KeyValuePair<string, string>("SDC_KILLER_FALLDAMAGE", "<color=#964B00>Fall Damage</color>"),
-                    new KeyValuePair<string, string>("SDC_KILLER_VOIDFOG", "<color=#964B00>Void Fog</color>"),
+                    new KeyValuePair<string, string>("SDC_KILLER_VOIDFOG", "<color=#753f8a>Void Fog</color>"),
 
                     new KeyValuePair<string, string>("SDC_GENERIC_PREFIX_DEATH", "<color=#FFFFFF>Killed By:</color> <color=#FFFF80>{0}</color> <color=#FFFFFF>({1} damage)</color>"),
                     new KeyValuePair<string, string>("SDC_GENERIC_PREFIX_DEATH_FRIENDLY", "<color=#FFFFFF>Killed By:</color> <color=#FFFF80>{0}</color> <color=#FFFFFF>({1} damage) <color=#32a852>(FF)</color></color>"),
-                    new KeyValuePair<string, string>("SDC_GENERIC_PREFIX_DEATH_VOID", "<color=#FFFFFF>Killed By:</color> <color=#FFFF80>{0}</color> <color=#FFFFFF>({1} damage) <color=#621e7d>(Void)</color></color>"),
+                    new KeyValuePair<string, string>("SDC_GENERIC_PREFIX_DEATH_VOID", "<color=#FFFFFF>Killed By:</color> <color=#FFFF80>{0}</color> <color=#FFFFFF>({1} damage) <color=#753f8a>(Jail)</color></color>"),
 
                     new KeyValuePair<string, string>("SDC_PLAYER_DEATH_VOIDFOG", "<color=#00FF80>{0}</color> died to <color=#964B00>void fog</color> ({2} damage taken)."),
                     new KeyValuePair<string, string>("SDC_PLAYER_DEATH_FALLDAMAGE", "<color=#00FF80>{0}</color> died to <color=#964B00>fall damage</color> ({2} damage taken)."),
