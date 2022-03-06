@@ -21,8 +21,12 @@ namespace ShowDeathCause
         public string GetAttackerName(DamageReport damageReport)
         {
             // Standard code path, GetBestBodyName replaces the need for a check against damageReport.attackerBody
-            return damageReport.attackerMaster.playerCharacterMasterController ? damageReport.attackerMaster.playerCharacterMasterController.networkUser
-                        .userName : Util.GetBestBodyName(damageReport.attackerBody.gameObject);
+            if (damageReport.attackerMaster)
+            {
+                return damageReport.attackerMaster.playerCharacterMasterController ? damageReport.attackerMaster.playerCharacterMasterController.networkUser
+                            .userName : Util.GetBestBodyName(damageReport.attackerBody.gameObject);
+            }
+            else return "???";
         }
 
         public void Awake()
